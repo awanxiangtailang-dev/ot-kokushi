@@ -80,8 +80,9 @@ cpSync("ot-site", "release", { recursive: true, filter: (src) => !/[\\/]ot-site[
 cpSync("dist", "release/app", { recursive: true });
 
 // %SITE_URL% を本物の URL に置きかえる
-for (const file of walk("release").filter((f) => f.endsWith(".html"))) {
-  writeFileSync(file, readFileSync(file, "utf8").replaceAll("%SITE_URL%", url));
+// (walk は app/ を飛ばすので、アプリのフォルダは別に足す)
+for (const file of [...walk("release"), ...walk("release/app")].filter((f) => f.endsWith(".html"))) {
+  writeFileSync(file, readFileSync(file, "utf8").replaceAll("%SITE_URL%", url).replaceAll("__SITE_URL__", url));
 }
 
 // 検索エンジン向け

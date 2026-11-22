@@ -4,6 +4,7 @@ import { PARTS } from "../types/quiz";
 import { dailyQuestion, filterQuestions, questionTitle, type QuizFilter } from "../logic/quiz";
 import { MODE_LABELS, availableCount, weakQuestions, type ProgressMap, type QuizMode } from "../logic/weakness";
 import { SITE } from "../config/site";
+import { NEXT_EXAM, daysUntil, overallAccuracy, studyStreak } from "../logic/stats";
 import type { QuizSettings } from "../App";
 import { SourceNote } from "./SourceNote";
 
@@ -49,20 +50,63 @@ export function HomeScreen(props: Props) {
   ];
   const actualCount = Math.min(count, available);
   const totalWeak = weakQuestions(questions, progress).length;
-  const answered = questions.filter((q) => progress[q.id]).length;
+  // ヒーローに出す数字(国試の問題だけで数える)
+  const examQuestions = questions.filter((q) => q.part !== "オリジナル");
+  const examTotal = examQuestions.length;
+  const examAnswered = examQuestions.filter((q) => progress[q.id]).length;
+  const accuracy = overallAccuracy(progress);
+  const streak = studyStreak(progress);
+  const daysLeft = daysUntil(NEXT_EXAM.date);
   const today = dailyQuestion(questions);
   const allExams = exams.map((e) => e.exam);
   const allSelected = allExams.every((e) => filter.exams.includes(e));
 
   return (
     <main className="screen">
-      <p className="eyebrow">
-        <a href={SITE.blogUrl}>OT国試ノート</a>
-      </p>
-      <h1>{SITE.appName}</h1>
-      <p className="sub lead">
-        作業療法士国家試験の第{Math.min(...allExams)}回〜第{Math.max(...allExams)}回、{questions.length - questions.filter((q) => q.part === "オリジナル").length}問を収録。正答は厚生労働省の発表どおりです。
-      </p>
+      <section className="hero">
+        <div className="hero-top">
+          <p className="eyebrow">
+            <a href={SITE.blogUrl}>← OT国試ノート</a>
+          </p>
+          {daysLeft >= 0 && (
+            <p className="countdown">
+              {daysLeft === 0 ? (
+                "今日が本番！ がんばれ！"
+              ) : (
+                <>
+                  {NEXT_EXAM.name}まで あと<b>{daysLeft}</b>日
+                </>
+              )}
+            </p>
+          )}
+        </div>
+        <h1>{SITE.appName}</h1>
+        <p className="lead">
+          第{Math.min(...allExams)}回〜第{Math.max(...allExams)}回・正答は厚生労働省の発表どおり
+        </p>
+        <div className="clear-meter">
+          <div className="clear-label">
+            <span>クリアした問題</span>
+            <span>
+              <b>{examAnswered.toLocaleString()}</b> / {examTotal.toLocaleString()}問
+            </span>
+          </div>
+          <div className="meter" role="progressbar" aria-valuemin={0} aria-valuemax={examTotal} aria-valuenow={examAnswered}>
+            <div style={{ width: `${(examAnswered / Math.max(1, examTotal)) * 100}%` }} />
+          </div>
+        </div>
+        <div className="hero-stats">
+          <div className="hero-stat">
+            <b>{accuracy === null ? "--" : `${accuracy}%`}</b>正答率
+          </div>
+          <div className="hero-stat">
+            <b>{streak > 0 ? `🔥${streak}` : "0"}</b>日連続
+          </div>
+          <button className="hero-stat" onClick={props.onOpenWeakList}>
+            <b>{totalWeak}</b>苦手 →
+          </button>
+        </div>
+      </section>
 
       {loadState === "loading" && <p className="notice">記録を読み込んでいます…</p>}
       {loadState === "failed" && (
@@ -72,7 +116,7 @@ export function HomeScreen(props: Props) {
 
       {today && (
         <section className="card today">
-          <p className="today-label">今日の1問</p>
+          <p className="today-label">TODAY・今日の1問</p>
           <p className="today-title">{questionTitle(today)}</p>
           <p className="today-stem">{(today.caseText ? today.caseText + " " : "") + today.stem}</p>
           <button className="secondary" onClick={() => props.onStartQuestions([today])}>
@@ -81,23 +125,11 @@ export function HomeScreen(props: Props) {
         </section>
       )}
 
-      <section className="card weak-summary">
-        <div>
-          <p className="weak-count">
-            苦手な問題 <strong>{totalWeak}</strong> 問
-          </p>
-          <p className="sub">
-            解いた問題 {answered} / {questions.length}・
-            {storeKind === "cloud" ? "記録はスマホと PC で共有されます" : "記録はこのブラウザに保存されます"}
-          </p>
-        </div>
-        <button className="secondary small" onClick={props.onOpenWeakList}>
-          苦手一覧
-        </button>
-      </section>
-
       <section className="card">
-        <h2>回</h2>
+        <h2 className="step-title">
+          <span className="num">1</span>出題範囲
+        </h2>
+        <h3>回</h3>
         <div className="option-grid">
           <button
             className={`chip ${allSelected ? "selected" : ""}`}
@@ -151,7 +183,9 @@ export function HomeScreen(props: Props) {
       </section>
 
       <section className="card">
-        <h2>出題のしかた</h2>
+        <h2 className="step-title">
+          <span className="num">2</span>出題のしかた
+        </h2>
         <div className="option-grid">
           {MODES.map((m) => (
             <button key={m} className={`chip ${mode === m ? "selected" : ""}`} aria-pressed={mode === m} onClick={() => setMode(m)}>
@@ -173,7 +207,9 @@ export function HomeScreen(props: Props) {
       </section>
 
       <section className="card">
-        <h2>問題数</h2>
+        <h2 className="step-title">
+          <span className="num">3</span>問題数
+        </h2>
         {available === 0 ? (
           <p className="sub">
             {mode === "weakOnly"
@@ -203,8 +239,11 @@ export function HomeScreen(props: Props) {
         disabled={available === 0 || loadState === "loading"}
         onClick={() => props.onStart({ filter, count: actualCount, mode, ordered })}
       >
-        スタート
+        {available === 0 ? "スタート" : `${actualCount}問に挑戦する！`}
       </button>
+      <p className="sub save-note">
+        {storeKind === "cloud" ? "記録はスマホと PC で共有されます。" : "記録はこのブラウザに保存されます。"}
+      </p>
 
       <section className="card blog-links">
         <h2>勉強のしかたに迷ったら</h2>

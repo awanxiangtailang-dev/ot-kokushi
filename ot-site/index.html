@@ -19,40 +19,83 @@
 <body>
   <header class="site-header">
     <div class="wrap">
-      <a class="logo" href="index.html">OT<span>国試</span>ノート</a>
+      <a class="logo" href="index.html"><span>国試</span>ノート</a>
       <nav class="nav">
-        <a href="index.html">ホーム</a>
+        <a href="app/">過去問</a>
         <a href="about.html">運営者</a>
         <a href="privacy.html">ポリシー</a>
       </nav>
     </div>
   </header>
 
+  <section class="hero-band">
+    <div class="wrap">
+      <!-- 次の試験日(厚生労働省の発表: 第62回は2027年2月21日)。毎年ここを書きかえる -->
+      <p class="countdown" data-exam-date="2027-02-21" hidden>
+        第62回 作業療法士国家試験まで <strong>あと<span class="cd-num">--</span>日</strong>
+      </p>
+      <h1>国試、<span class="hl">こわくない。</span><br>いっしょに合格しよう。</h1>
+      <p class="lead">現役の作業療法士が、自分の国試勉強で使った参考書・スケジュール・失敗談をぜんぶ書いています。過去問アプリは無料です。</p>
+      <div class="hero-cta">
+        <a class="btn-cta" href="app/">過去問2,000問に挑戦 →</a>
+        <a class="btn-ghost" href="articles/schedule.html">勉強スケジュールを見る</a>
+      </div>
+      <ul class="stats">
+        <li><b>2,000</b>問</li>
+        <li><b>10</b>年分</li>
+        <li><b>0</b>円</li>
+      </ul>
+    </div>
+  </section>
+
   <main class="wrap">
     <p class="pr-note">本サイトはアフィリエイト広告（PR）を利用しています</p>
 
-    <section class="hero">
-      <h1>作業療法士の国家試験、<br>実際にこうやって勉強しました。</h1>
-      <p>現役OTが、自分の国試対策で使った参考書・スケジュール・失敗したことを、体験そのままに書いています。</p>
-    </section>
+    <h2 class="section-title">合格までの3ステップ</h2>
+    <div class="steps">
+      <div class="step">
+        <span class="step-no">STEP 1</span>
+        <h3>過去問で、いまの実力を知る</h3>
+        <p>まずは最新の回を10問。正答は厚生労働省の発表どおりです。</p>
+        <a href="app/">過去問アプリを開く →</a>
+      </div>
+      <div class="step">
+        <span class="step-no">STEP 2</span>
+        <h3>苦手だけを、くり返しつぶす</h3>
+        <p>間違えた問題は自動で「苦手」に。2回続けて正解すれば克服です。</p>
+        <a href="app/">苦手を復習する →</a>
+      </div>
+      <div class="step">
+        <span class="step-no">STEP 3</span>
+        <h3>先輩の勉強法で、仕上げる</h3>
+        <p>いつ・何を・どれくらいやったか。現役OTの体験談を参考に。</p>
+        <a href="articles/schedule.html">体験談を読む →</a>
+      </div>
+    </div>
 
     <a class="app-banner" href="app/">
-      <span class="tag">無料</span>
-      <strong>過去問10年分(2,000問)を解いてみる →</strong>
-      <span>第52回〜第61回の作業療法士国家試験。正答は厚生労働省の発表どおり。苦手な問題を自動で記録します。</span>
+      <span class="tag">無料・登録なし</span>
+      <strong>今日の1問に挑戦してみる</strong>
+      <span>第52回〜第61回の作業療法士国家試験。スマホでそのまま解けます。</span>
     </a>
 
     <h2 class="section-title">体験談の記事</h2>
     <div class="cards">
       <a class="card" href="articles/schedule.html">
-        <span class="tag">スケジュール</span>
-        <h3>国試までの勉強スケジュール｜いつ・何を・どれくらいやったか</h3>
-        <p>実習が終わってから本番までの、月ごとの勉強内容と1日の勉強時間をまとめました。</p>
+        <div class="card-icon" aria-hidden="true">🗓️</div>
+        <div class="card-body">
+          <span class="tag">スケジュール</span>
+          <h3>国試までの勉強スケジュール｜いつ・何を・どれくらいやったか</h3>
+          <p>実習が終わってから本番までの、月ごとの勉強内容と1日の勉強時間をまとめました。</p>
+        </div>
       </a>
       <a class="card" href="articles/textbooks.html">
-        <span class="tag">参考書レビュー</span>
-        <h3>国試対策で実際に使った参考書・問題集と正直な感想</h3>
-        <p>買ってよかったもの、使いきれなかったもの。どんな人に向いているかも書きました。</p>
+        <div class="card-icon alt" aria-hidden="true">📚</div>
+        <div class="card-body">
+          <span class="tag">参考書レビュー</span>
+          <h3>国試対策で実際に使った参考書・問題集と正直な感想</h3>
+          <p>買ってよかったもの、使いきれなかったもの。どんな人に向いているかも書きました。</p>
+        </div>
       </a>
     </div>
 
@@ -70,6 +113,7 @@
   <footer class="site-footer">
     <div class="wrap">
       <div class="links">
+        <a href="app/">過去問アプリ</a>
         <a href="about.html">運営者情報</a>
         <a href="privacy.html">プライバシーポリシー・免責事項</a>
       </div>
@@ -77,5 +121,22 @@
       <p>© OT国試ノート</p>
     </div>
   </footer>
+
+  <script>
+    // 試験日までのカウントダウン(試験日を過ぎたら表示しない)
+    (function () {
+      var el = document.querySelector(".countdown");
+      if (!el) return;
+      var p = el.getAttribute("data-exam-date").split("-");
+      var target = new Date(+p[0], +p[1] - 1, +p[2]);
+      var now = new Date();
+      var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      var days = Math.round((target - today) / 86400000);
+      if (days < 0) return;
+      if (days === 0) el.innerHTML = "<strong>今日が本番。ここまでの自分を信じて！</strong>";
+      else el.querySelector(".cd-num").textContent = days;
+      el.hidden = false;
+    })();
+  </script>
 </body>
 </html>

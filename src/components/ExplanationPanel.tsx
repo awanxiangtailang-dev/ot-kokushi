@@ -1,19 +1,30 @@
 import { answerLabel, correctNumbers } from "../logic/quiz";
 import type { Question } from "../types/quiz";
+import { Confetti } from "./Confetti";
 
 interface Props {
   question: Question;
   selected: readonly number[];
   correct: boolean;
+  /** いま何問続けて正解しているか */
+  combo?: number;
 }
 
 /** 正解・解説 */
-export function ExplanationPanel({ question: q, selected, correct }: Props) {
+export function ExplanationPanel({ question: q, selected, correct, combo = 0 }: Props) {
   const ex = q.explanation;
   const right = correctNumbers(q);
   return (
     <section className={`explanation ${correct ? "ok" : "ng"}`} aria-live="polite">
-      <p className="verdict">{correct ? "正解！" : "不正解"}</p>
+      {correct && <Confetti />}
+      <p className="verdict">{correct ? "正解！" : "おしい！"}</p>
+      <p className="verdict-sub">
+        {correct
+          ? combo >= 3
+            ? `🔥 ${combo}問連続正解！ この調子！`
+            : "ナイス！ 解説でもう一度おさえておこう。"
+          : "間違えた問題は「苦手」に入りました。解説を読めば、次は取れます。"}
+      </p>
       <p>
         正解: <strong>{answerLabel(q)}</strong>
         {selected.length > 0 && <span className="sub"> (あなたの答え: {selected.join(" と ")})</span>}

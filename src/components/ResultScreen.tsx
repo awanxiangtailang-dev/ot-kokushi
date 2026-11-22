@@ -2,6 +2,48 @@ import type { AnswerRecord, Part, Question } from "../types/quiz";
 import { answerLabel, questionTitle, summarize } from "../logic/quiz";
 import { diffProgress, type ProgressMap } from "../logic/weakness";
 import { AffiliateBox } from "./AffiliateBox";
+import { Confetti } from "./Confetti";
+import { cheer } from "../logic/stats";
+import { useEffect, useState } from "react";
+
+/** 正答率のリング(表示したあと、0 から伸びていく) */
+function ScoreRing({ rate }: { rate: number }) {
+  const r = 70;
+  const len = 2 * Math.PI * r;
+  const [shown, setShown] = useState(0);
+  useEffect(() => {
+    const t = setTimeout(() => setShown(rate), 50);
+    return () => clearTimeout(t);
+  }, [rate]);
+  return (
+    <svg className="ring" viewBox="0 0 168 168" role="img" aria-label={`正答率 ${rate}%`}>
+      <defs>
+        <linearGradient id="ringGrad" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0%" stopColor="#0fb5a0" />
+          <stop offset="55%" stopColor="#3d8bfd" />
+          <stop offset="100%" stopColor="#6d5df6" />
+        </linearGradient>
+      </defs>
+      <circle className="ring-bg" cx="84" cy="84" r={r} fill="none" strokeWidth="14" />
+      <circle
+        className="ring-fg"
+        cx="84"
+        cy="84"
+        r={r}
+        fill="none"
+        stroke="url(#ringGrad)"
+        strokeWidth="14"
+        strokeLinecap="round"
+        strokeDasharray={len}
+        strokeDashoffset={len * (1 - shown / 100)}
+        transform="rotate(-90 84 84)"
+      />
+      <text className="ring-text" x="84" y="92" textAnchor="middle" fontSize="36">
+        {rate}%
+      </text>
+    </svg>
+  );
+}
 
 interface Props {
   questions: readonly Question[];
@@ -15,6 +57,7 @@ interface Props {
 
 export function ResultScreen({ questions, records, before, after, saveError, onRetry, onHome }: Props) {
   const summary = summarize(records);
+  const message = cheer(summary.rate);
   const answeredIds = records.map((r) => r.questionId);
   const { newlyMastered, newlyWeak } = diffProgress(before, after, answeredIds);
   const byId = new Map(questions.map((q) => [q.id, q]));
@@ -30,10 +73,13 @@ export function ResultScreen({ questions, records, before, after, saveError, onR
       {saveError && <p className="notice warn">{saveError}</p>}
 
       <section className="card score">
+        <ScoreRing rate={summary.rate} />
+        <p className="score-title">{message.title}</p>
         <p className="score-main">
           {summary.correctCount} / {summary.total} 問正解
         </p>
-        <p className="score-rate">正答率 {summary.rate}%</p>
+        <p className="score-rate">{message.message}</p>
+        {summary.rate >= 60 && <Confetti count={30} />}
       </section>
 
       {newlyMastered.length > 0 && (
@@ -70,11 +116,7 @@ export function ResultScreen({ questions, records, before, after, saveError, onR
             </details>
           ))}
         </section>
-      ) : (
-        <section className="card">
-          <p>全問正解です 🎉</p>
-        </section>
-      )}
+      ) : null}
 
       {weakestPart && <AffiliateBox part={weakestPart} />}
 

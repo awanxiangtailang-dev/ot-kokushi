@@ -18,6 +18,8 @@ export function QuizScreen({ questions, onAnswer, onFinish, onQuit }: Props) {
   const [picked, setPicked] = useState<number[]>([]);
   const [answered, setAnswered] = useState<AnswerRecord | null>(null);
   const [records, setRecords] = useState<AnswerRecord[]>([]);
+  // 連続正解の数(このクイズの中で)
+  const [combo, setCombo] = useState(0);
 
   const q = questions[index];
   const isLast = index === questions.length - 1;
@@ -27,6 +29,7 @@ export function QuizScreen({ questions, onAnswer, onFinish, onQuit }: Props) {
     const record = recordAnswer(q, selected);
     setAnswered(record);
     setRecords((prev) => [...prev, record]);
+    setCombo((c) => (record.correct ? c + 1 : 0));
     onAnswer(q, record.correct);
   };
 
@@ -65,6 +68,11 @@ export function QuizScreen({ questions, onAnswer, onFinish, onQuit }: Props) {
         <button className="link" onClick={onQuit}>
           ← やめる
         </button>
+        {combo >= 2 && (
+          <span className="combo" key={combo}>
+            🔥 {combo}連続
+          </span>
+        )}
         <span className="progress">
           {index + 1} / {questions.length}
         </span>
@@ -102,7 +110,7 @@ export function QuizScreen({ questions, onAnswer, onFinish, onQuit }: Props) {
 
       {answered && (
         <>
-          <ExplanationPanel question={q} selected={answered.selected} correct={answered.correct} />
+          <ExplanationPanel question={q} selected={answered.selected} correct={answered.correct} combo={combo} />
           <button className="primary" onClick={next}>
             {isLast ? "結果を見る" : "次の問題へ"}
           </button>
