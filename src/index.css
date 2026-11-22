@@ -1,0 +1,408 @@
+/* 見た目はシンプルに。おしゃれさは後で追加 */
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --text: #1f2328;
+  --muted: #656d76;
+  --border: #d0d7de;
+  --accent: #2563eb;
+  --ok: #15803d;
+  --ok-bg: #e8f5ec;
+  --ng: #b91c1c;
+  --ng-bg: #fdecec;
+  --on-accent: #ffffff;
+  font-family: system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Yu Gothic UI", "Meiryo", sans-serif;
+  color: var(--text);
+  line-height: 1.6;
+}
+
+/* ダークモード(端末の設定に合わせる) */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #14171c;
+    --card: #1d2129;
+    --text: #e6e9ee;
+    --muted: #9aa3ae;
+    --border: #353b46;
+    --accent: #4f83f1;
+    --ok: #4ade80;
+    --ok-bg: #16301f;
+    --ng: #f87171;
+    --ng-bg: #3a1d1f;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #14171c;
+  --card: #1d2129;
+  --text: #e6e9ee;
+  --muted: #9aa3ae;
+  --border: #353b46;
+  --accent: #4f83f1;
+  --ok: #4ade80;
+  --ok-bg: #16301f;
+  --ng: #f87171;
+  --ng-bg: #3a1d1f;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.screen {
+  max-width: 640px;
+  margin: 0 auto;
+  padding-block: 16px 48px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+
+button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+}
+
+h1 { font-size: 1.5rem; margin: 8px 0 16px; }
+h2 { font-size: 1.05rem; margin: 0 0 12px; }
+h3 { font-size: 0.95rem; margin: 16px 0 6px; }
+
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.option-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 999px;
+  padding: 8px 14px;
+  min-height: 44px;
+}
+.chip.selected {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.primary, .secondary {
+  display: block;
+  width: 100%;
+  min-height: 52px;
+  border-radius: 12px;
+  font-weight: 600;
+  margin-top: 12px;
+}
+.primary {
+  border: none;
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+.secondary {
+  border: 1px solid var(--border);
+  background: var(--card);
+}
+
+.link {
+  border: none;
+  background: none;
+  color: var(--muted);
+  padding: 8px 0;
+}
+
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.progress { color: var(--muted); font-weight: 600; }
+.progress-bar {
+  height: 6px;
+  background: var(--border);
+  border-radius: 3px;
+  overflow: hidden;
+  margin: 4px 0 16px;
+}
+.progress-bar > div {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.2s;
+}
+
+.category-tag {
+  display: inline-block;
+  font-size: 0.8rem;
+  color: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0 10px;
+  margin: 0 0 8px;
+}
+.question { font-size: 1.1rem; line-height: 1.6; }
+
+.choices {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.choice {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  text-align: left;
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 14px;
+  border: 2px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  color: var(--text);
+}
+.choice:disabled { cursor: default; }
+.choice:not(:disabled):hover { border-color: var(--accent); }
+.choice.correct { border-color: var(--ok); background: var(--ok-bg); }
+.choice.wrong { border-color: var(--ng); background: var(--ng-bg); }
+.choice.dim { opacity: 0.6; }
+.choice-label {
+  flex: 0 0 auto;
+  font-weight: 700;
+  color: var(--muted);
+}
+
+.explanation {
+  margin-top: 16px;
+  padding: 16px;
+  border-radius: 12px;
+  background: var(--card);
+  border: 2px solid var(--border);
+}
+.explanation.ok { border-color: var(--ok); }
+.explanation.ng { border-color: var(--ng); }
+.verdict { font-size: 1.2rem; font-weight: 700; margin: 0 0 8px; }
+.explanation.ok .verdict { color: var(--ok); }
+.explanation.ng .verdict { color: var(--ng); }
+
+.notes { padding-left: 0; list-style: none; margin: 0; }
+.notes li {
+  padding: 8px 10px;
+  border-radius: 8px;
+  margin-bottom: 6px;
+  background: var(--bg);
+}
+.notes li.note-answer { background: var(--ok-bg); }
+.notes li.note-selected { background: var(--ng-bg); }
+
+.reference {
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 12px;
+}
+
+.score { text-align: center; }
+.score-main { font-size: 1.6rem; font-weight: 700; margin: 0; }
+.score-rate { color: var(--muted); margin: 4px 0 0; }
+
+.review {
+  border-top: 1px solid var(--border);
+  padding: 10px 0;
+}
+.review summary { cursor: pointer; font-weight: 600; }
+
+/* ── 苦手機能 ── */
+.sub { color: var(--muted); font-size: 0.85rem; margin: 8px 0 0; }
+.notice {
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  margin: 0 0 16px;
+}
+.notice.warn { border-color: var(--ng); background: var(--ng-bg); }
+
+.weak-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.weak-summary > div { min-width: 0; }
+.weak-count { margin: 0; font-size: 1.05rem; }
+.weak-count strong { font-size: 1.5rem; color: var(--ng); font-variant-numeric: tabular-nums; }
+.weak-summary .sub { margin: 0; }
+
+.secondary.small {
+  display: inline-block;
+  width: auto;
+  min-height: 44px;
+  margin: 0;
+  padding: 0 16px;
+}
+
+.weak-badge {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 0 7px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  background: var(--ng-bg);
+  color: var(--ng);
+}
+.chip.selected .weak-badge { background: var(--card); }
+
+.mastered { border-color: var(--ok); }
+.mastered h2 { color: var(--ok); }
+.plain-list { margin: 0; padding-left: 1.2em; }
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  text-align: center;
+  gap: 8px;
+}
+.stats-row .sub { margin: 0; }
+.stat-num { margin: 0; font-size: 1.5rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.weak-meta {
+  display: block;
+  font-weight: 400;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-top: 4px;
+}
+.review .category-tag { margin-right: 6px; }
+
+.danger-zone { margin-top: 24px; }
+.button-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.button-row > button { flex: 1 1 140px; margin-top: 0; }
+.danger {
+  min-height: 52px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  background: var(--ng);
+  color: var(--on-accent);
+}
+
+/* ── 国試過去問版 ── */
+a { color: var(--accent); }
+.eyebrow { margin: 4px 0 0; font-size: 0.85rem; }
+.eyebrow a { color: var(--muted); text-decoration: none; }
+.lead { margin: 0 0 16px; }
+.chip-sub { margin-left: 4px; font-size: 0.75rem; opacity: 0.75; }
+.order-row { margin-top: 10px; }
+.start { font-size: 1.05rem; margin-bottom: 20px; }
+
+.today { border-color: var(--accent); }
+.today-label { margin: 0; font-size: 0.8rem; font-weight: 700; color: var(--accent); }
+.today-title { margin: 2px 0 6px; font-weight: 700; }
+.today-stem {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.q-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 10px; font-size: 0.85rem; color: var(--muted); }
+.q-meta .category-tag { margin: 0; }
+.pick-two { font-weight: 700; color: var(--ng); }
+.case-text {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin: 0 0 12px;
+  font-size: 0.95rem;
+}
+.q-image { display: block; margin: 8px 0 14px; border: 1px solid var(--border); border-radius: 8px; overflow: hidden; background: #fff; }
+.q-image img { display: block; width: 100%; height: auto; }
+.bessatsu { margin-bottom: 8px; }
+.bessatsu .sub { margin: 0; }
+.ocr-text { margin: 0 0 12px; font-size: 0.9rem; color: var(--muted); }
+.ocr-text summary { cursor: pointer; }
+
+.choice.picked { border-color: var(--accent); background: color-mix(in srgb, var(--accent) 10%, var(--card)); }
+.choices.numbers-only { flex-direction: row; flex-wrap: wrap; }
+.choices.numbers-only .choice { flex: 1 1 56px; justify-content: center; }
+.choices.numbers-only .choice-label { color: var(--text); font-size: 1.1rem; }
+
+.unreviewed {
+  margin-left: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 1px 8px;
+  border-radius: 999px;
+  border: 1px solid var(--muted);
+  color: var(--muted);
+  vertical-align: middle;
+}
+.ex-text { white-space: pre-wrap; }
+
+.after-answer { margin: 12px 0; text-align: center; }
+.share-x {
+  display: inline-block;
+  padding: 10px 18px;
+  border-radius: 999px;
+  background: #111;
+  color: #fff;
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.affiliate {
+  position: relative;
+  margin: 16px 0;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px dashed var(--border);
+  background: var(--card);
+}
+.pr-tag, .pr-inline {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0 6px;
+}
+.pr-tag { margin: 0 0 6px; }
+.pr-inline { margin-left: 6px; }
+.affiliate-lead { margin: 0 0 8px; font-size: 0.9rem; }
+.affiliate-items { list-style: none; padding: 0; margin: 0 0 8px; }
+.affiliate-items li { padding: 8px 0; border-top: 1px solid var(--border); }
+.affiliate-items a { display: flex; justify-content: space-between; gap: 8px; text-decoration: none; }
+.affiliate-items .shop { font-size: 0.85rem; white-space: nowrap; }
+.affiliate-link { font-weight: 600; font-size: 0.95rem; }
+
+.blog-links .plain-list li { margin: 6px 0; }
+.stat-of { font-size: 0.9rem; color: var(--muted); font-weight: 400; }
+.weak-meta-inline { font-size: 0.8rem; color: var(--muted); }
+
+.source-note { margin-top: 28px; font-size: 0.78rem; color: var(--muted); }
+.source-note p { margin: 0 0 8px; }
+.source-note ul { margin: 6px 0 10px; padding-left: 1.2em; }

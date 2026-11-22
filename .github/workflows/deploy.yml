@@ -1,0 +1,53 @@
+# GitHub に上げる(main ブランチに push する)と、自動でテスト → 公開用フォルダづくり → GitHub Pages に公開
+# 初回だけ: リポジトリの Settings → Pages → Source を「GitHub Actions」にする
+#
+# 公開先の URL は https://<ユーザー名>.github.io/<リポジトリ名> が自動で使われる
+# (独自ドメインにしたら site.config.json の siteUrl に書き、下の SITE_URL の行を消す)
+#
+# 記事の書きかけ(「自分で書く」の枠・【 】・# のままのリンク)が残っていると、
+# 公開の手前で止まる(書きかけのまま公開されないようにするため)
+name: 公開(GitHub Pages)
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: テスト(ロジックと問題データ)
+        run: npm test
+      - name: 公開用フォルダを作る
+        run: npm run release
+        env:
+          SITE_URL: https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: release
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

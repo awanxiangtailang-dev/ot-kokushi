@@ -1,0 +1,64 @@
+{
+ "exams": [
+  {
+   "exam": 61,
+   "year": 2026,
+   "count": 200,
+   "source": "https://www.mhlw.go.jp/seisakunitsuite/bunya/kenkou_iryou/iryou/topics/tp260424-08_09.html"
+  },
+  {
+   "exam": 60,
+   "year": 2025,
+   "count": 200,
+   "source": "https://www.mhlw.go.jp/seisakunitsuite/bunya/kenkou_iryou/iryou/topics/tp250428-08_09.html"
+  },
+  {
+   "exam": 59,
+   "year": 2024,
+   "count": 200,
+   "source": "https://www.mhlw.go.jp/seisakunitsuite/bunya/kenkou_iryou/iryou/topics/tp240424-08_09.html"
+  },
+  {
+   "exam": 58,
+   "year": 2023,
+   "count": 200,
+   "source": "https://www.mhlw.go.jp/seisakunitsuite/bunya/kenkou_iryou/iryou/topics/tp230524-08_09.html"
+  },
+  {
+   "exam": 57,
+   "year": 2022,
+   "count": 200,
+   "source": "https://www.mhlw.go.jp/seisakunitsuite/bunya/kenkou_iryou/iryou/topics/tp220421-08_09.html"
+  },
+  {
+   "exam": 56,
+   "year": 2021,
+   "count": 200,
+   "source": "https://www.mhlw.go.jp/seisakunitsuite/bunya/kenkou_iryou/iryou/topics/tp210416-08_09.html"
+  },
+  {
+   "exam": 55,
+   "year": 2020,
+   "count": 200,
+   "source": "https://www.mhlw.go.jp/seisakunitsuite/bunya/kenkou_iryou/iryou/topics/tp200414-08_09.html"
+  },
+  {
+   "exam": 54,
+   "year": 2019,
+   "count": 200,
+   "source": "https://www.mhlw.go.jp/seisakunitsuite/bunya/kenkou_iryou/iryou/topics/tp190415-08_09.html"
+  },
+  {
+   "exam": 53,
+   "year": 2018,
+   "count": 200,
+   "source": "https://www.mhlw.go.jp/seisakunitsuite/bunya/kenkou_iryou/iryou/topics/tp180511-08_09.html"
+  },
+  {
+   "exam": 52,
+   "year": 2017,
+   "count": 200,
+   "source": "https://www.mhlw.go.jp/seisakunitsuite/bunya/kenkou_iryou/iryou/topics/tp170425-08_09.html"
+  }
+ ]
+}
