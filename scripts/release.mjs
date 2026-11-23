@@ -32,7 +32,10 @@ function walk(dir) {
     return [p];
   });
 }
-const htmlFiles = walk("ot-site").filter((f) => f.endsWith(".html"));
+// 過去問の解説ページを最新のデータから作り直す(ot-site/kakomon/)
+execSync("node scripts/make-pages.mjs", { stdio: "inherit" });
+// 書きかけのチェックは、自分で書くページだけ(自動で作る解説ページは除く)
+const htmlFiles = walk("ot-site").filter((f) => f.endsWith(".html") && !/[\\/]kakomon[\\/]/.test(f));
 for (const file of htmlFiles) {
   const html = readFileSync(file, "utf8");
   const name = relative("ot-site", file).replaceAll("\\", "/");
@@ -87,7 +90,9 @@ for (const file of [...walk("release"), ...walk("release/app")].filter((f) => f.
 
 // 検索エンジン向け
 const pages = htmlFiles.map((f) => relative("ot-site", f).replaceAll("\\", "/"));
-const urls = [...pages.map((p) => `${url}/${p === "index.html" ? "" : p}`), `${url}/app/`];
+// 解説ページは、検索に出すもの(監修済みの解説と一覧ページ)だけをサイトマップに入れる
+const { indexable } = JSON.parse(readFileSync("ot-site/kakomon/pages.json", "utf8"));
+const urls = [...pages.map((p) => `${url}/${p === "index.html" ? "" : p}`), `${url}/app/`, ...indexable.map((p) => `${url}/${p}`)];
 writeFileSync(
   "release/sitemap.xml",
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls.map((u) => `  <url><loc>${u}</loc></url>`).join("\n")}\n</urlset>\n`,
