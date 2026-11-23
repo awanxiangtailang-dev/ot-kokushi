@@ -75,7 +75,8 @@ for (const exam of targets.length ? targets : EXAMS) {
             const isFirst = k === 0;
             const isLast = k === q.regions.length - 1;
             // 下端: 同じページに次の問題があればその上まで、なければフッターの上まで(図が下にあることがある)
-            const pageBottom = (r.footerY ?? bodyBottom) + 6;
+            // (フッターの行まで含める。ページ番号などは whiteOutFooter で消す。footerY は DKIX の高さ + 8)
+            const pageBottom = r.footerY ? r.footerY - 12 : bodyBottom;
             const nextTop = next && next.regions[0].page === r.page ? next.regions[0].top + 4 : pageBottom;
             return { page: r.page, top: isFirst ? r.top + 6 : r.ph - 40, bottom: isLast ? nextTop : pageBottom };
           });
@@ -178,11 +179,36 @@ async function renderCrop(doc, pageNo, _unused, out, rotate, scale) {
   writeFileSync(out, o.toBuffer("image/webp", WEBP_QUALITY));
 }
 
+/**
+ * ページ下のフッター(「— 1 —」のページ番号と「DKIX-…」)を白く塗る。
+ * 図のラベル(「5. 膝伸展」など)がフッターと同じ高さにあることがあり、
+ * 画像はフッターの行まで切り出すので、ページ番号などだけを消しておく。
+ */
+async function whiteOutFooter(doc, pageNo, c, vp) {
+  const tc = await (await doc.getPage(pageNo)).getTextContent();
+  const dkix = tc.items.find((it) => /^DKIX/.test(it.str));
+  if (!dkix) return;
+  const fy = dkix.transform[5];
+  const ctx = c.getContext("2d");
+  ctx.fillStyle = "#fff";
+  for (const it of tc.items) {
+    if (Math.abs(it.transform[5] - fy) > 3) continue;
+    if (!/^DKIX/.test(it.str) && !/^[\s—－\-−─\d]+$/.test(it.str)) continue; // 図のラベルは残す
+    const h = Math.abs(it.transform[3]) || 10;
+    // ページ番号の両側の「—」は文字ではなく線なので、数字だけの項目は左右を広めに消す
+    const pad = /^\s*\d+\s*$/.test(it.str) ? 30 : 2;
+    const [x0, y0] = vp.convertToViewportPoint(it.transform[4] - pad, it.transform[5] + h + 2);
+    const [x1, y1] = vp.convertToViewportPoint(it.transform[4] + it.width + pad, it.transform[5] - 4);
+    ctx.fillRect(x0, y0, x1 - x0, y1 - y0);
+  }
+}
+
 /** 問題の範囲(複数ページのことも)を縦に並べて1枚の画像にする */
 async function renderStack(doc, parts, out) {
   const pieces = [];
   for (const part of parts) {
     const { c, vp } = await renderPage(doc, part.page, IMG_SCALE);
+    await whiteOutFooter(doc, part.page, c, vp);
     const [, yTop] = vp.convertToViewportPoint(0, part.top);
     const [, yBottom] = vp.convertToViewportPoint(0, part.bottom);
     const box = trimBox(c, {
