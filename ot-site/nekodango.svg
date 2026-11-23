@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="ねこだんご">
+  <!-- 運営者「ねこだんご」のアイコン(白いまん丸のねこだんご) -->
+  <line x1="100" y1="166" x2="100" y2="194" stroke="#c89b6d" stroke-width="9" stroke-linecap="round"/>
+  <path d="M50 74 L57 36 L86 58 Z" fill="#ffffff" stroke="#5a3e36" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M150 74 L143 36 L114 58 Z" fill="#ffffff" stroke="#5a3e36" stroke-width="3.5" stroke-linejoin="round"/>
+  <path d="M57 68 L61 46 L77 59 Z" fill="#f7b3c3"/>
+  <path d="M143 68 L139 46 L123 59 Z" fill="#f7b3c3"/>
+  <circle cx="100" cy="104" r="66" fill="#ffffff" stroke="#5a3e36" stroke-width="3.5"/>
+  <ellipse cx="100" cy="150" rx="38" ry="10" fill="#f6f2ec"/>
+  <ellipse cx="78" cy="70" rx="16" ry="8" fill="#f6f3ee"/>
+  <path d="M70 102 Q79 89 88 102" fill="none" stroke="#3b2a25" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M112 102 Q121 89 130 102" fill="none" stroke="#3b2a25" stroke-width="4.5" stroke-linecap="round"/>
+  <path d="M95 109 L100 113 L105 109" fill="none" stroke="#3b2a25" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M87 117 Q100 140 113 117 Z" fill="#c9485f" stroke="#3b2a25" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M93 128 Q100 136 107 128 Q100 124 93 128 Z" fill="#ff9aac"/>
+  <ellipse cx="63" cy="118" rx="11" ry="6.5" fill="#f7a1b5" opacity="0.75"/>
+  <ellipse cx="137" cy="118" rx="11" ry="6.5" fill="#f7a1b5" opacity="0.75"/>
+  <path d="M40 110 L24 106" stroke="#5a3e36" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M40 118 L24 120" stroke="#5a3e36" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M160 110 L176 106" stroke="#5a3e36" stroke-width="2.5" stroke-linecap="round"/>
+  <path d="M160 118 L176 120" stroke="#5a3e36" stroke-width="2.5" stroke-linecap="round"/>
+</svg>

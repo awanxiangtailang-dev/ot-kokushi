@@ -80,7 +80,7 @@ async function extract(file, map) {
       }
       items.push({ str, x, y, w: it.width, h });
     }
-    lines.push(...groupLines(items, p, pw, ph).map((l) => ({ ...l, footerY })));
+    lines.push(...mergeSuperscripts(groupLines(items, p, pw, ph)).map((l) => ({ ...l, footerY })));
   }
 
   const questions = splitQuestions(lines);
@@ -138,4 +138,22 @@ function leftNeighbor(items, it) {
     if (o.transform[4] < it.transform[4] && (!best || o.transform[4] > best.transform[4])) best = o;
   }
   return best;
+}
+/**
+ * 上付き文字(「Na⁺」の「＋」、「Ca²⁺」の「2＋」など)は小さい文字で少し上に印刷されるため、
+ * 別の行になってしまう。すぐ下の行に戻す。
+ */
+function mergeSuperscripts(lines) {
+  const out = [];
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const next = lines[i + 1];
+    const small = line.items.length <= 3 && line.items.every((it) => it.h <= 9 && it.str.trim().length <= 3);
+    if (small && next && line.y - next.y > 0 && line.y - next.y < 8 && next.h > 9) {
+      next.items = [...next.items, ...line.items].sort((a, b) => a.x - b.x);
+      continue;
+    }
+    out.push(line);
+  }
+  return out;
 }

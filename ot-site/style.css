@@ -449,3 +449,14 @@ th { background: var(--brand-soft); white-space: nowrap; }
 @media (prefers-reduced-motion: reduce) {
   * { transition: none !important; }
 }
+
+/* 運営者アイコン(ねこだんごのイラスト) */
+img.avatar {
+  display: block;
+  object-fit: contain;
+  padding: 5px;
+  background: #fff6f8;
+  border: 2px solid #f7c6d2;
+}
+img.avatar { flex-basis: 84px; width: 84px; height: 84px; }
+img.avatar { padding: 0; object-fit: cover; border-color: #e7dccb; background: #fff; }
