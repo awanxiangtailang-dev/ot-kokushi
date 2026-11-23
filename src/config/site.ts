@@ -11,6 +11,8 @@ export const SITE = {
   blogUrl: "../index.html",
   /** 参考書レビュー記事(アフィリエイトのメイン) */
   textbooksUrl: "../articles/textbooks.html",
+  /** 過去問の解説ページ(scripts/make-pages.mjs で作る) */
+  kakomonUrl: "../kakomon/",
   /** 勉強スケジュール記事 */
   scheduleUrl: "../articles/schedule.html",
   /** 公開後のアプリのURL(Xでシェアするとき使う)。site.config.json の siteUrl から自動で決まる。空なら今開いているURL */

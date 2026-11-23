@@ -1,6 +1,7 @@
 import { answerLabel, correctNumbers } from "../logic/quiz";
 import type { Question } from "../types/quiz";
 import { Confetti } from "./Confetti";
+import { SITE } from "../config/site";
 
 interface Props {
   question: Question;
@@ -53,6 +54,13 @@ export function ExplanationPanel({ question: q, selected, correct, combo = 0 }: 
             </ul>
           )}
           {ex.refs && ex.refs.length > 0 && <p className="reference">参考: {ex.refs.join(" / ")}</p>}
+          {q.exam > 0 && q.no && (
+            <p className="reference">
+              <a href={`${SITE.kakomonUrl}${q.exam}/${q.session === "午前" ? "a" : "b"}${String(q.no).padStart(3, "0")}.html`}>
+                この問題の解説ページを開く →
+              </a>
+            </p>
+          )}
         </>
       ) : (
         <p className="sub">この問題の解説は準備中です。</p>
