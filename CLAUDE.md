@@ -43,12 +43,12 @@
 - 本名・勤務先・メールアドレスをファイルに書かない
 
 ## 現状(2026-11-25)
-- 解説: 第52〜61回の2,000問すべてあり。監修済みは第61回の200問だけ(残り1,800問は未監修)
-- ドメイン `ot-kokushi.com` を Cloudflare で購入済み。GitHub に push 済み、Pages・DNS 設定済み。公開は書きかけ3ページ待ち
-- 運営者ページ・体験談記事2本は書きかけ(運営者の回答待ち)。公開先は GitHub Pages の予定(リポジトリ未作成)
+- 解説: 第52〜61回の2,000問すべてあり。監修済みは第58回・第61回の400問(第60回を監修中)
+- **2026-11-25 に ot-kokushi.com を公開した**(GitHub Pages。https は証明書待ち)
+- 運営者ページは記入済み(お問い合わせフォームは「準備中」)。体験談記事2本は drafts のまま
 
 ## 次にやること
 方針: 試験(2027年2月下旬)前に検索に載せたいので、「公開」と「監修」を先にする
 0. **【運営者に毎回声をかける】GitHub の Settings → Pages で「Enforce HTTPS」にチェックが入ったか確認する**(2026-11-25 は DNS Check in Progress で待ち。入ったらこの行を消す)
-1. 書きかけ3ページ(トップの1行・about・privacy の日付)を埋めて push → 公開 → Search Console(`docs/公開の手順.md`)。GitHub(awanxiangtailang-dev/ot-kokushi)・ドメイン・DNS は設定済み。push はユーザーの Terminal パネルで行う(GCM のログインが要るため)
-2. 監修(新しい回から。`npm run review`、あやしい問題から)3. 運営者ページ・記事(回答が来たら文章に整える)
+1. Search Console は所有権確認済み(2026-11-25、Cloudflare の TXT レコード。消さない)。HTTPS が有効になったら `https://ot-kokushi.com/sitemap.xml` を送信する。push はユーザーの Terminal パネルで行う(GCM のログインが要るため)
+2. 監修(新しい回から。`npm run review`、あやしい問題から)3. お問い合わせフォーム 4. 記事2本・臨床ノート(回答が来たら文章に整える)
