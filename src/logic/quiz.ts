@@ -37,9 +37,14 @@ export function examOrder(a: Question, b: Question): number {
   return (a.no ?? 0) - (b.no ?? 0);
 }
 
-/** 正誤判定。選んだ番号の組が、正解の組のどれかと同じなら正解。採点除外は常に正解 */
+/** 採点除外(厚労省の発表で点数に数えない問題)か */
+export function isExcluded(q: Question): boolean {
+  return !!q.excluded || q.answers.length === 0;
+}
+
+/** 正誤判定。選んだ番号の組が、正解の組のどれかと同じなら正解。採点除外は不正解にしない(正答率には数えない) */
 export function isCorrect(question: Question, selected: readonly number[]): boolean {
-  if (question.excluded || question.answers.length === 0) return true;
+  if (isExcluded(question)) return true;
   const picked = [...new Set(selected)].sort((a, b) => a - b);
   return question.answers.some(
     (set) => set.length === picked.length && [...set].sort((a, b) => a - b).every((n, i) => n === picked[i]),
@@ -48,11 +53,14 @@ export function isCorrect(question: Question, selected: readonly number[]): bool
 
 /** 回答記録を作る */
 export function recordAnswer(question: Question, selected: readonly number[]): AnswerRecord {
-  return { questionId: question.id, selected: [...selected], correct: isCorrect(question, selected) };
+  const record: AnswerRecord = { questionId: question.id, selected: [...selected], correct: isCorrect(question, selected) };
+  if (isExcluded(question)) record.excluded = true;
+  return record;
 }
 
-/** 採点 */
-export function summarize(records: readonly AnswerRecord[]): QuizSummary {
+/** 採点(採点除外の問題は数えない) */
+export function summarize(all: readonly AnswerRecord[]): QuizSummary {
+  const records = all.filter((r) => !r.excluded);
   const total = records.length;
   const correctCount = records.filter((r) => r.correct).length;
   return {
@@ -65,7 +73,7 @@ export function summarize(records: readonly AnswerRecord[]): QuizSummary {
 
 /** 正解の表示用文字列(例: "3"、"2 と 5"、複数正解なら "3 / 4 のどちらでも正解") */
 export function answerLabel(q: Question): string {
-  if (q.excluded || q.answers.length === 0) return "採点除外(全員正解)";
+  if (isExcluded(q)) return "なし(採点除外)";
   const sets = q.answers.map((s) => s.join(" と "));
   return sets.length === 1 ? sets[0] : `${sets.join(" / ")}(どれでも正解)`;
 }

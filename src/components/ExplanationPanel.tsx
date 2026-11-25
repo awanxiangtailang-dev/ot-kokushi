@@ -1,4 +1,4 @@
-import { answerLabel, correctNumbers } from "../logic/quiz";
+import { answerLabel, correctNumbers, isExcluded } from "../logic/quiz";
 import type { Question } from "../types/quiz";
 import { Confetti } from "./Confetti";
 import { SITE } from "../config/site";
@@ -15,12 +15,15 @@ interface Props {
 export function ExplanationPanel({ question: q, selected, correct, combo = 0 }: Props) {
   const ex = q.explanation;
   const right = correctNumbers(q);
+  const excluded = isExcluded(q);
   return (
     <section className={`explanation ${correct ? "ok" : "ng"}`} aria-live="polite">
-      {correct && <Confetti />}
-      <p className="verdict">{correct ? "正解！" : "おしい！"}</p>
+      {correct && !excluded && <Confetti />}
+      <p className="verdict">{excluded ? "採点除外の問題" : correct ? "正解！" : "おしい！"}</p>
       <p className="verdict-sub">
-        {correct
+        {excluded
+          ? "この問題は正答率・苦手には数えません。解説で中身だけおさえておこう。"
+          : correct
           ? combo >= 3
             ? `🔥 ${combo}問連続正解！ この調子！`
             : "ナイス！ 解説でもう一度おさえておこう。"
@@ -30,7 +33,7 @@ export function ExplanationPanel({ question: q, selected, correct, combo = 0 }: 
         正解: <strong>{answerLabel(q)}</strong>
         {selected.length > 0 && <span className="sub"> (あなたの答え: {selected.join(" と ")})</span>}
       </p>
-      {q.excluded && <p className="sub">この問題は厚生労働省の発表で採点除外(全員正解扱い)になりました。</p>}
+      {excluded && <p className="sub">この問題は厚生労働省の発表で、採点の対象から外されました(国試の点数に数えない問題です)。</p>}
       {q.answers.length > 1 && <p className="sub">この問題は厚生労働省の発表で、複数の答えが正解として扱われました。</p>}
 
       {ex ? (

@@ -29,6 +29,8 @@ export function QuizScreen({ questions, onAnswer, onFinish, onQuit }: Props) {
     const record = recordAnswer(q, selected);
     setAnswered(record);
     setRecords((prev) => [...prev, record]);
+    // 採点除外の問題は、連続正解・苦手・正答率に数えない
+    if (record.excluded) return;
     setCombo((c) => (record.correct ? c + 1 : 0));
     onAnswer(q, record.correct);
   };

@@ -32,7 +32,7 @@ const pad = (n) => String(n).padStart(3, "0");
 const fileOf = (q) => `${q.session === "午前" ? "a" : "b"}${pad(q.no)}.html`;
 const answerLabel = (q) =>
   q.excluded || !q.answers.length
-    ? "採点除外(全員正解)"
+    ? "なし(採点除外)"
     : q.answers.length === 1
       ? q.answers[0].join(" と ")
       : `${q.answers.map((s) => s.join(" と ")).join(" / ")}(どれでも正解)`;
@@ -150,7 +150,7 @@ for (const e of index.exams) {
     <details class="q-answer">
       <summary>正解と解説を見る</summary>
       <p class="q-correct">正解: <strong>${esc(answerLabel(q))}</strong></p>
-      ${q.excluded ? "<p>この問題は厚生労働省の発表で採点除外(全員正解扱い)になりました。</p>" : ""}
+      ${q.excluded ? "<p>この問題は厚生労働省の発表で、採点の対象から外されました(国試の点数に数えない問題です)。</p>" : ""}
       <h2>解説${x.reviewed ? "" : '<span class="unreviewed">未監修</span>'}</h2>
       <p>${esc(x.text)}</p>
       ${x.choiceNotes ? `<ol class="q-notes">${x.choiceNotes.map((n) => `<li>${esc(n)}</li>`).join("")}</ol>` : ""}

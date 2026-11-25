@@ -56,12 +56,18 @@ describe("正誤判定", () => {
     expect(isCorrect(multi, [1, 3])).toBe(false);
   });
 
-  it("採点除外の問題は、何を選んでも正解", () => {
+  it("採点除外の問題は、何を選んでも不正解にしない", () => {
     expect(isCorrect(q({ answers: [], excluded: true }), [1])).toBe(true);
   });
 
   it("回答記録", () => {
     expect(recordAnswer(q({}), [3])).toEqual({ questionId: "61A001", selected: [3], correct: true });
+    expect(recordAnswer(q({ answers: [], excluded: true }), [1])).toEqual({
+      questionId: "61A001",
+      selected: [1],
+      correct: true,
+      excluded: true,
+    });
   });
 });
 
@@ -70,7 +76,7 @@ describe("表示用の文字", () => {
     expect(answerLabel(q({}))).toBe("3");
     expect(answerLabel(q({ pick: 2, answers: [[2, 5]] }))).toBe("2 と 5");
     expect(answerLabel(q({ answers: [[3], [4]] }))).toBe("3 / 4(どれでも正解)");
-    expect(answerLabel(q({ answers: [], excluded: true }))).toBe("採点除外(全員正解)");
+    expect(answerLabel(q({ answers: [], excluded: true }))).toBe("なし(採点除外)");
   });
 
   it("問題の見出し", () => {
@@ -130,6 +136,15 @@ describe("その他", () => {
     const s = summarize([
       { questionId: "a", selected: [1], correct: true },
       { questionId: "b", selected: [2], correct: false },
+    ]);
+    expect(s).toEqual({ total: 2, correctCount: 1, rate: 50, wrongIds: ["b"] });
+  });
+
+  it("採点除外の問題は、採点に数えない", () => {
+    const s = summarize([
+      { questionId: "a", selected: [1], correct: true },
+      { questionId: "b", selected: [2], correct: false },
+      { questionId: "x", selected: [3], correct: true, excluded: true },
     ]);
     expect(s).toEqual({ total: 2, correctCount: 1, rate: 50, wrongIds: ["b"] });
   });

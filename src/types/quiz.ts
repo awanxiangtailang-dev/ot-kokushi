@@ -38,7 +38,7 @@ export interface Question {
   pick: 1 | 2;
   /** 正解の組み合わせ(1始まりの番号)。複数あるときはどれでも正解。空なら採点除外 */
   answers: number[][];
-  /** 採点除外(全員正解扱い)になった問題 */
+  /** 厚労省の発表で採点対象から除外された問題(点数に数えない。アプリでも正答率に入れない) */
   excluded?: boolean;
   /** 問題の画像(図・表がある問題、OCRで読んだ回) */
   image?: string | null;
@@ -65,6 +65,8 @@ export interface AnswerRecord {
   /** 選んだ番号(1始まり) */
   selected: number[];
   correct: boolean;
+  /** 採点除外の問題(正答率・苦手・連続正解に数えない) */
+  excluded?: true;
 }
 
 /** 結果のまとめ */

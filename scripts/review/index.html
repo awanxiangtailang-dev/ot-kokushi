@@ -134,7 +134,7 @@ function render() {
   if (!q) { $("#main").innerHTML = `<div class="card"><h2>この条件の問題は、もうありません 🎉</h2><p>「未確認だけ」を外すと、全部見られます。</p></div>`; return; }
   const x = ex[q.id], right = new Set(q.excluded ? [] : q.answers.flat()), fl = flagsOf(q);
   const marked = markedOf(x);
-  const ans = q.excluded || !q.answers.length ? "採点除外(全員正解)" : q.answers.map((a) => a.join(" と ")).join(" / ") + (q.answers.length > 1 ? "(どれでも正解)" : "");
+  const ans = q.excluded || !q.answers.length ? "なし(採点除外)" : q.answers.map((a) => a.join(" と ")).join(" / ") + (q.answers.length > 1 ? "(どれでも正解)" : "");
   const imgs = [q.image, ...(q.bessatsu ?? [])].filter(Boolean);
   const st = state(q);
   $("#main").innerHTML = `
