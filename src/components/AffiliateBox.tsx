@@ -4,6 +4,8 @@ import type { Part } from "../types/quiz";
 /** 区分に合わせた参考書の案内(広告であることを明示する) */
 export function AffiliateBox({ part }: { part: Part }) {
   const { lead, items } = AFFILIATE[part];
+  // 商品もレビュー記事もまだないときは、何も出さない
+  if (!items.length && !SITE.textbooksUrl) return null;
   return (
     <aside className="affiliate" aria-label="広告">
       <p className="pr-tag">PR</p>
@@ -21,9 +23,11 @@ export function AffiliateBox({ part }: { part: Part }) {
           ))}
         </ul>
       )}
-      <a className="affiliate-link" href={SITE.textbooksUrl}>
-        現役OTが国試で使った参考書のレビューを読む →
-      </a>
+      {SITE.textbooksUrl && (
+        <a className="affiliate-link" href={SITE.textbooksUrl}>
+          現役OTが国試で使った参考書のレビューを読む →
+        </a>
+      )}
     </aside>
   );
 }

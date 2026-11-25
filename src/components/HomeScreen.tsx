@@ -245,19 +245,25 @@ export function HomeScreen(props: Props) {
         {storeKind === "cloud" ? "記録はスマホと PC で共有されます。" : "記録はこのブラウザに保存されます。"}
       </p>
 
-      <section className="card blog-links">
-        <h2>勉強のしかたに迷ったら</h2>
-        <p className="sub">現役の作業療法士が、自分の国試勉強を振り返って書いた体験談です。</p>
-        <ul className="plain-list">
-          <li>
-            <a href={SITE.scheduleUrl}>国試までの勉強スケジュール</a>
-          </li>
-          <li>
-            <a href={SITE.textbooksUrl}>国試対策で実際に使った参考書・問題集</a>
-            <span className="pr-inline">PR</span>
-          </li>
-        </ul>
-      </section>
+      {(SITE.scheduleUrl || SITE.textbooksUrl) && (
+        <section className="card blog-links">
+          <h2>勉強のしかたに迷ったら</h2>
+          <p className="sub">現役の作業療法士が、自分の国試勉強を振り返って書いた体験談です。</p>
+          <ul className="plain-list">
+            {SITE.scheduleUrl && (
+              <li>
+                <a href={SITE.scheduleUrl}>国試までの勉強スケジュール</a>
+              </li>
+            )}
+            {SITE.textbooksUrl && (
+              <li>
+                <a href={SITE.textbooksUrl}>国試対策で実際に使った参考書・問題集</a>
+                <span className="pr-inline">PR</span>
+              </li>
+            )}
+          </ul>
+        </section>
+      )}
 
       {exams.length > 0 && <SourceNote exams={exams} />}
     </main>

@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>解説の監修</title>
+<style>
+  :root { --bg:#f6f4ef; --card:#fff; --ink:#2b2a27; --sub:#6b675f; --line:#e2ddd2; --ok:#2f7d4f; --okbg:#e6f3ea; --fix:#b5571d; --fixbg:#fbeee2; --warn:#9a6a00; --warnbg:#fff4d6; --accent:#3d6db5; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#1d1c1a; --card:#272522; --ink:#ece8df; --sub:#a8a297; --line:#3a3732; --ok:#6cc48f; --okbg:#1f3328; --fix:#f0a06a; --fixbg:#3a2719; --warn:#e7c25c; --warnbg:#3a321a; --accent:#8fb2ec; } }
+  * { box-sizing: border-box; }
+  body { margin:0; background:var(--bg); color:var(--ink); font-family: system-ui, "Hiragino Sans", "Yu Gothic UI", sans-serif; line-height:1.7; }
+  header { position:sticky; top:0; z-index:5; background:var(--card); border-bottom:1px solid var(--line); padding:10px 16px; }
+  .bar { max-width:860px; margin:0 auto; display:flex; flex-wrap:wrap; gap:8px 14px; align-items:center; }
+  .bar h1 { font-size:17px; margin:0 8px 0 0; }
+  select, button, textarea { font:inherit; color:inherit; }
+  select { padding:4px 8px; border:1px solid var(--line); border-radius:8px; background:var(--card); }
+  .progress { font-size:14px; color:var(--sub); }
+  .progress b { color:var(--ok); }
+  .jump { max-width:860px; margin:8px auto 0; display:flex; flex-wrap:wrap; gap:3px; }
+  .jump button { width:30px; height:24px; padding:0; font-size:11px; border:1px solid var(--line); background:var(--card); border-radius:5px; cursor:pointer; }
+  .jump button.ok { background:var(--okbg); border-color:var(--ok); color:var(--ok); }
+  .jump button.fix { background:var(--fixbg); border-color:var(--fix); color:var(--fix); }
+  .jump button.flag:not(.ok):not(.fix) { border-color:var(--warn); border-width:2px; }
+  .jump button.cur { outline:2px solid var(--accent); outline-offset:1px; }
+  main { max-width:860px; margin:16px auto 80px; padding:0 16px; }
+  .card { background:var(--card); border:1px solid var(--line); border-radius:14px; padding:18px 20px; }
+  .meta { font-size:13px; color:var(--sub); display:flex; flex-wrap:wrap; gap:6px 10px; align-items:center; }
+  .pill { display:inline-block; font-size:12px; padding:1px 9px; border-radius:99px; border:1px solid var(--line); }
+  .pill.warn { background:var(--warnbg); border-color:var(--warn); color:var(--warn); font-weight:600; }
+  .pill.ok { background:var(--okbg); border-color:var(--ok); color:var(--ok); }
+  .pill.fix { background:var(--fixbg); border-color:var(--fix); color:var(--fix); }
+  h2 { font-size:18px; margin:6px 0 10px; }
+  .case { background:var(--bg); border-radius:10px; padding:10px 12px; font-size:15px; }
+  .stem { font-weight:600; }
+  img { max-width:100%; border:1px solid var(--line); border-radius:8px; margin:6px 0; background:#fff; }
+  ol.choices { padding-left:0; list-style:none; margin:10px 0; }
+  ol.choices li { padding:6px 10px; border-radius:8px; margin:3px 0; border:1px solid transparent; }
+  ol.choices li.right { background:var(--okbg); border-color:var(--ok); font-weight:600; }
+  ol.choices li .n { display:inline-block; width:1.6em; color:var(--sub); }
+  .answer { font-size:15px; margin:10px 0; }
+  .answer b { color:var(--ok); }
+  .ex { border-top:1px dashed var(--line); margin-top:14px; padding-top:10px; }
+  .ex h3 { font-size:15px; margin:0 0 6px; color:var(--sub); }
+  ol.notes { padding-left:1.6em; margin:8px 0 0; }
+  ol.notes li { margin:4px 0; }
+  ol.notes li.right { color:var(--ok); }
+  ol.notes li.mismatch { background:var(--warnbg); }
+  .actions { position:sticky; bottom:0; background:var(--bg); padding:12px 0 6px; display:flex; flex-wrap:wrap; gap:8px; }
+  .actions button { padding:10px 18px; border-radius:10px; border:1px solid var(--line); background:var(--card); cursor:pointer; font-weight:600; }
+  .actions .okbtn { background:var(--ok); border-color:var(--ok); color:#fff; }
+  .actions .fixbtn { color:var(--fix); border-color:var(--fix); }
+  .memo { width:100%; display:none; }
+  .memo textarea { width:100%; min-height:80px; padding:8px; border-radius:8px; border:1px solid var(--fix); background:var(--card); }
+  .memo.show { display:block; }
+  .hint { font-size:12px; color:var(--sub); margin-top:4px; }
+  .toast { position:fixed; left:50%; bottom:20px; transform:translateX(-50%); background:var(--ink); color:var(--bg); padding:8px 16px; border-radius:99px; font-size:14px; opacity:0; transition:opacity .2s; pointer-events:none; }
+  .toast.show { opacity:1; }
+  label { font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <div class="bar">
+    <h1>解説の監修</h1>
+    <select id="exam" aria-label="回"></select>
+    <select id="order" aria-label="並び順">
+      <option value="flag">あやしい順</option>
+      <option value="no">問題の順</option>
+    </select>
+    <label><input type="checkbox" id="todoOnly" checked> 未確認だけ</label>
+    <span class="progress" id="progress"></span>
+  </div>
+  <div class="jump" id="jump"></div>
+</header>
+<main id="main"><p>読み込み中…</p></main>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = (s) => document.querySelector(s);
+const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;" })[c]);
+// 選択肢の解説で「正解」と書いてあるもの(「正解。〜」「〜。誤り(正解)。」など)
+const MARK = /^正解|[(（]正解[)）]/;
+const markedOf = (x) => new Set((x?.choiceNotes ?? []).map((n, i) => (MARK.test(n) ? i + 1 : 0)).filter(Boolean));
+const LAW =/法律|法第|基本法|保険|制度|条約|総合支援|介護保険|医療法|統計|割合|診療報酬|手帳|白書|調査|国際生活機能|ICF|倫理/;
+let exams = [], questions = [], ex = {}, notes = {}, list = [], cur = 0;
+
+function flagsOf(q) {
+  const x = ex[q.id], f = [];
+  if (!q.excluded && q.answers.length && x?.choiceNotes) {
+    const want = new Set(q.answers.flat());
+    const marked = markedOf(x);
+    if (want.size !== marked.size || [...want].some((n) => !marked.has(n))) f.push(["正解の書き方がデータと合っていない?", 10]);
+  }
+  if (q.image || q.bessatsu?.length || q.choicesFromImage) f.push(["図のある問題", 2]);
+  if (q.excluded || !q.answers.length) f.push(["採点除外", 3]);
+  else if (q.answers.length > 1) f.push(["複数正解", 3]);
+  if (LAW.test(q.stem + (q.caseText ?? "") + q.choices.join(""))) f.push(["法律・制度・数字", 2]);
+  if (q.ocr) f.push(["文字を画像から読んだ問題", 1]);
+  return f;
+}
+const score = (q) => flagsOf(q).reduce((s, f) => s + f[1], 0);
+const state = (q) => (ex[q.id]?.reviewed ? "ok" : notes[q.id] ? "fix" : "");
+const label = (q) => `${q.session === "午前" ? "A" : "P"}${q.no}`;
+
+async function loadExam(exam) {
+  const [d, e, n] = await Promise.all([
+    fetch(`/data/exams/${exam}.json`).then((r) => r.json()),
+    fetch(`/data/explanations/${exam}.json`).then((r) => (r.ok ? r.json() : {})),
+    fetch(`/api/notes`).then((r) => r.json()),
+  ]);
+  questions = d.questions.filter((q) => e[q.id]);
+  ex = e; notes = n;
+  rebuild(true);
+}
+
+function rebuild(resetPos) {
+  const id = list[cur]?.id;
+  list = [...questions];
+  if ($("#todoOnly").checked) list = list.filter((q) => !state(q));
+  if ($("#order").value === "flag") list.sort((a, b) => score(b) - score(a) || questions.indexOf(a) - questions.indexOf(b));
+  cur = resetPos ? 0 : Math.max(0, list.findIndex((q) => q.id === id));
+  render();
+}
+
+function render() {
+  const done = questions.filter((q) => ex[q.id]?.reviewed).length;
+  const fix = questions.filter((q) => notes[q.id] && !ex[q.id]?.reviewed).length;
+  $("#progress").innerHTML = `監修済み <b>${done}</b> / ${questions.length}問` + (fix ? `・直したい ${fix}問` : "");
+  $("#jump").innerHTML = questions.map((q) => {
+    const c = [state(q), score(q) >= 2 ? "flag" : "", list[cur]?.id === q.id ? "cur" : ""].join(" ");
+    return `<button class="${c}" data-id="${q.id}" title="${q.session} 問${q.no}">${label(q)}</button>`;
+  }).join("");
+  const q = list[cur];
+  if (!q) { $("#main").innerHTML = `<div class="card"><h2>この条件の問題は、もうありません 🎉</h2><p>「未確認だけ」を外すと、全部見られます。</p></div>`; return; }
+  const x = ex[q.id], right = new Set(q.excluded ? [] : q.answers.flat()), fl = flagsOf(q);
+  const marked = markedOf(x);
+  const ans = q.excluded || !q.answers.length ? "採点除外(全員正解)" : q.answers.map((a) => a.join(" と ")).join(" / ") + (q.answers.length > 1 ? "(どれでも正解)" : "");
+  const imgs = [q.image, ...(q.bessatsu ?? [])].filter(Boolean);
+  const st = state(q);
+  $("#main").innerHTML = `
+  <div class="card">
+    <div class="meta">
+      <span>第${q.exam}回 ${q.session} 問${q.no}・${esc(q.part)}${q.pick === 2 ? "・2つ選ぶ" : ""}</span>
+      ${st === "ok" ? '<span class="pill ok">監修済み</span>' : st === "fix" ? '<span class="pill fix">直したい</span>' : ""}
+      ${fl.map((f) => `<span class="pill ${f[1] >= 2 ? "warn" : ""}">${esc(f[0])}</span>`).join("")}
+      <span style="margin-left:auto">${cur + 1} / ${list.length}</span>
+    </div>
+    ${q.caseText ? `<p class="case">${esc(q.caseText)}</p>` : ""}
+    <p class="stem">${esc(q.stem)}</p>
+    ${imgs.map((s) => `<img src="/${esc(s)}" alt="図">`).join("")}
+    ${q.choicesFromImage ? "<p class='hint'>選択肢は図の番号です。</p>" : `<ol class="choices">${q.choices.map((c, i) => `<li class="${right.has(i + 1) ? "right" : ""}"><span class="n">${i + 1}.</span>${esc(c)}</li>`).join("")}</ol>`}
+    <p class="answer">正解(厚労省の発表): <b>${esc(ans)}</b></p>
+    <div class="ex">
+      <h3>解説</h3>
+      <p>${esc(x.text)}</p>
+      ${x.choiceNotes ? `<ol class="notes">${x.choiceNotes.map((n, i) => `<li class="${marked.has(i + 1) ? "right" : ""} ${marked.has(i + 1) !== right.has(i + 1) && !q.excluded ? "mismatch" : ""}">${esc(n)}</li>`).join("")}</ol>` : ""}
+    </div>
+  </div>
+  <div class="actions">
+    <button class="okbtn" id="okBtn">OK(監修済みにする)</button>
+    <button class="fixbtn" id="fixBtn">直したい</button>
+    <button id="prevBtn">← 前</button>
+    <button id="nextBtn">あとで(次へ) →</button>
+    ${st ? '<button id="resetBtn">未確認に戻す</button>' : ""}
+    <div class="memo ${st === "fix" ? "show" : ""}" id="memo">
+      <textarea id="memoText" placeholder="どこがおかしいか、ひとことでOK(例: 3の説明が逆。正しくは〜)">${esc(notes[q.id]?.note ?? "")}</textarea>
+      <button class="fixbtn" id="saveFix">メモを保存して次へ</button>
+    </div>
+    <p class="hint" style="width:100%">キーボード: O = OK、F = 直したい、← → = 前・次</p>
+  </div>`;
+  $("#okBtn").onclick = () => save("ok");
+  $("#fixBtn").onclick = () => { $("#memo").classList.add("show"); $("#memoText").focus(); };
+  $("#saveFix").onclick = () => save("fix", $("#memoText").value);
+  $("#prevBtn").onclick = () => move(-1);
+  $("#nextBtn").onclick = () => move(1);
+  if ($("#resetBtn")) $("#resetBtn").onclick = () => save("reset");
+  window.scrollTo(0, 0);
+}
+
+function move(d) { cur = Math.min(list.length - 1, Math.max(0, cur + d)); render(); }
+
+async function save(status, note) {
+  const q = list[cur];
+  const r = await fetch("/api/review", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id: q.id, status, note }) });
+  if (!r.ok) { toast("保存できませんでした: " + (await r.text())); return; }
+  ex[q.id].reviewed = status === "ok";
+  if (status === "fix") notes[q.id] = { note }; else delete notes[q.id];
+  toast(status === "ok" ? "監修済みにしました" : status === "fix" ? "メモを保存しました" : "未確認に戻しました");
+  if ($("#todoOnly").checked && status !== "reset") { list.splice(cur, 1); if (cur >= list.length) cur = Math.max(0, list.length - 1); render(); }
+  else if (status === "reset") render();
+  else move(1);
+}
+
+function toast(t) { const el = $("#toast"); el.textContent = t; el.classList.add("show"); clearTimeout(toast.t); toast.t = setTimeout(() => el.classList.remove("show"), 1600); }
+
+document.addEventListener("keydown", (e) => {
+  if (e.target.tagName === "TEXTAREA" || e.target.tagName === "SELECT") return;
+  if (e.key === "o" || e.key === "O") save("ok");
+  else if (e.key === "f" || e.key === "F") { e.preventDefault(); $("#fixBtn")?.click(); }
+  else if (e.key === "ArrowRight") move(1);
+  else if (e.key === "ArrowLeft") move(-1);
+});
+$("#jump").addEventListener("click", (e) => {
+  const id = e.target.dataset?.id; if (!id) return;
+  let i = list.findIndex((q) => q.id === id);
+  if (i < 0) { $("#todoOnly").checked = false; rebuild(false); i = list.findIndex((q) => q.id === id); }
+  cur = i; render();
+});
+$("#order").onchange = () => rebuild(true);
+$("#todoOnly").onchange = () => rebuild(false);
+$("#exam").onchange = () => { try { localStorage.setItem("review-exam", $("#exam").value); } catch {} loadExam($("#exam").value); };
+
+(async () => {
+  exams = (await fetch("/data/index.json").then((r) => r.json())).exams;
+  let saved = null; try { saved = localStorage.getItem("review-exam"); } catch {}
+  const first = saved || String(exams.find((e) => e.exam === 60)?.exam ?? exams[0].exam);
+  $("#exam").innerHTML = exams.map((e) => `<option value="${e.exam}" ${String(e.exam) === first ? "selected" : ""}>第${e.exam}回(${e.year}年)</option>`).join("");
+  loadExam($("#exam").value);
+})();
+</script>
+</body>
+</html>

@@ -9,6 +9,9 @@ import { readFileSync, writeFileSync, mkdirSync, rmSync, existsSync } from "node
 
 const OUT = "ot-site/kakomon";
 const index = JSON.parse(readFileSync("public/data/index.json", "utf8"));
+// まだ公開しない記事(site.config.json の drafts)へのリンクは出さない
+const drafts = existsSync("site.config.json") ? (JSON.parse(readFileSync("site.config.json", "utf8")).drafts ?? []) : [];
+const textbooksReady = !drafts.includes("articles/textbooks.html");
 
 const esc = (s) =>
   String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -137,11 +140,19 @@ for (const e of index.exams) {
       <a href="./">第${e.exam}回の一覧</a>
       ${next ? `<a href="${fileOf(next)}">${next.session} 問${next.no} →</a>` : "<span></span>"}
     </nav>
-    <a class="app-banner" href="../../articles/textbooks.html">
+    ${
+      textbooksReady
+        ? `<a class="app-banner" href="../../articles/textbooks.html">
       <span class="tag">PR</span>
       <strong>現役OTが国試で使った参考書を見る</strong>
       <span>苦手な分野を、効率よく復習するために。</span>
-    </a>`;
+    </a>`
+        : `<a class="app-banner" href="../../app/">
+      <span class="tag">無料・登録なし</span>
+      <strong>過去問アプリで、ほかの問題も解いてみる</strong>
+      <span>第52回〜第61回の2,000問。苦手な問題は自動で復習に回ります。</span>
+    </a>`
+    }`;
     writeFileSync(
       `${OUT}/${e.exam}/${fileOf(q)}`,
       layout({

@@ -12,7 +12,8 @@
                     "test":  "vitest run",
                     "typecheck":  "tsc --noEmit",
                     "release":  "node scripts/release.mjs",
-                    "release:check":  "node scripts/release.mjs --check"
+                    "release:check":  "node scripts/release.mjs --check",
+                    "review":  "node scripts/review/server.mjs"
                 },
     "dependencies":  {
                          "react":  "^18.3.1",

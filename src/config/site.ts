@@ -5,16 +5,20 @@ import type { Part } from "../types/quiz";
  * - アプリは体験談サイト(ot-site)の app/ フォルダに置く想定(npm run build:site)
  * - リンク先を変えるときは、このファイルだけ直せばOK
  */
+/** まだ公開しない記事(site.config.json の drafts)。公開版ではリンクを出さない */
+const DRAFTS = (import.meta.env.VITE_DRAFTS ?? "").split(",").filter(Boolean);
+const article = (path: string) => (DRAFTS.includes(path) ? "" : `../${path}`);
+
 export const SITE = {
   appName: "OT国試 過去問10年",
   /** 体験談サイトのトップ(アプリから見た位置) */
   blogUrl: "../index.html",
-  /** 参考書レビュー記事(アフィリエイトのメイン) */
-  textbooksUrl: "../articles/textbooks.html",
+  /** 参考書レビュー記事(アフィリエイトのメイン)。空なら未公開 */
+  textbooksUrl: article("articles/textbooks.html"),
   /** 過去問の解説ページ(scripts/make-pages.mjs で作る) */
   kakomonUrl: "../kakomon/",
-  /** 勉強スケジュール記事 */
-  scheduleUrl: "../articles/schedule.html",
+  /** 勉強スケジュール記事。空なら未公開 */
+  scheduleUrl: article("articles/schedule.html"),
   /** 公開後のアプリのURL(Xでシェアするとき使う)。site.config.json の siteUrl から自動で決まる。空なら今開いているURL */
   publicAppUrl: import.meta.env.VITE_SITE_URL ? `${import.meta.env.VITE_SITE_URL.replace(/\/$/, "")}/app/` : "",
   hashtags: ["作業療法士", "OT国試", "国試対策"],

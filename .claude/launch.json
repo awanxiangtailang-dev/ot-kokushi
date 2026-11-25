@@ -12,6 +12,18 @@
       "runtimeExecutable": "node",
       "runtimeArgs": ["scripts/serve-static.mjs", "ot-site", "4173"],
       "port": 4173
+    },
+    {
+      "name": "review",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/review/server.mjs"],
+      "port": 4174
+    },
+    {
+      "name": "release",
+      "runtimeExecutable": "node",
+      "runtimeArgs": ["scripts/serve-static.mjs", "release", "4175"],
+      "port": 4175
     }
   ]
 }
