@@ -30,6 +30,10 @@ describe("問題データ", () => {
     }
   });
 
+  it("選択肢に、図のラベル「別冊No.」がくっついていない", () => {
+    for (const q of all) for (const c of q.choices) expect(/別冊\s*No/.test(c), `${q.id}: ${c}`).toBe(false);
+  });
+
   it("選択肢を画像で見せる問題には、画像がある", () => {
     for (const q of all.filter((q) => q.choicesFromImage)) expect(q.image, q.id).toBeTruthy();
   });

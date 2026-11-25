@@ -59,7 +59,8 @@ for (const exam of targets.length ? targets : EXAMS) {
       const excluded = ans && ans.length === 0;
       const pick = ans && ans.length ? ans[0].length : q.pickTwo ? 2 : 1;
       if (ans && ans.length && q.pickTwo !== (pick === 2)) problems.push(`${id}: 「2つ選べ」(${q.pickTwo}) と正答の数(${pick}) が合わない`);
-      let choices = q.choices.slice(0, 5);
+      // 選択肢5のうしろに、図のラベル「別冊No. 1」などがくっついて読み取られることがあるので切る
+      let choices = q.choices.slice(0, 5).map((c) => c.replace(/\s*別冊\s*N\s*[oO。0]\s*[.．]?\s*\d+.*$/, ""));
       const fix = CORRECTIONS[id];
       if (fix?.choices) for (const [k, v] of Object.entries(fix.choices)) choices[k] = v;
       const choicesFromImage = choices.length !== 5 || !!q.choicesUnreliable;
