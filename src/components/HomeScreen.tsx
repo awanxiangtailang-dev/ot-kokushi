@@ -19,6 +19,7 @@ interface Props {
   onStart: (settings: QuizSettings) => void;
   onStartQuestions: (questions: Question[]) => void;
   onOpenWeakList: () => void;
+  onOpenSearch: () => void;
 }
 
 const COUNT_OPTIONS = [10, 20, 50, 100] as const;
@@ -107,6 +108,11 @@ export function HomeScreen(props: Props) {
           </button>
         </div>
       </section>
+
+      <button className="search-open" onClick={props.onOpenSearch}>
+        <span aria-hidden="true">🔍</span>
+        キーワードや問題番号で、問題をさがす
+      </button>
 
       {loadState === "loading" && <p className="notice">記録を読み込んでいます…</p>}
       {loadState === "failed" && (

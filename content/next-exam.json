@@ -1,0 +1,11 @@
+{
+  "note": "次の試験の情報(厚生労働省「作業療法士国家試験の施行」から写した)。問題データが入ったら(public/data/index.json にこの回が入ったら)、このページのかわりに問題の一覧ページが同じURLに出る",
+  "exam": 62,
+  "year": 2027,
+  "writtenDate": "2027-02-21",
+  "writtenDateLabel": "2027年(令和9年)2月21日(日)",
+  "oralDateLabel": "2027年(令和9年)2月22日(月)",
+  "places": ["北海道", "宮城県", "東京都", "愛知県", "大阪府", "香川県", "福岡県", "沖縄県"],
+  "oralPlaces": ["東京都"],
+  "source": "https://www.mhlw.go.jp/kouseiroudoushou/shikaku_shiken/sagyouryouhoushi/"
+}

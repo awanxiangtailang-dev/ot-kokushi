@@ -7,4 +7,5 @@ release
 backup-*
 *.log
 ot-site/kakomon
+ot-site/rinsho
 /review/

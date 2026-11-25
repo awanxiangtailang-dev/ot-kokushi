@@ -53,6 +53,18 @@ describe("問題データ", () => {
   });
 });
 
+describe("合格率データ(content/goukaku.json)", () => {
+  const g = JSON.parse(readFileSync("content/goukaku.json", "utf8")).exams;
+  it("合格率は人数から計算した値と合い、満点は一般+実地", () => {
+    for (const r of g) {
+      expect(Math.round((r.passed / r.examinees) * 1000) / 10, `第${r.exam}回`).toBe(r.rate);
+      expect(Math.round((r.newPassed / r.newExaminees) * 1000) / 10, `第${r.exam}回 新卒`).toBe(r.newRate);
+      expect(r.generalMax + r.practicalMax, `第${r.exam}回`).toBe(r.totalMax);
+      expect(r.source, `第${r.exam}回`).toMatch(/^https:\/\/www\.mhlw\.go\.jp\//);
+    }
+  });
+});
+
 describe("解説データ", () => {
   it("解説のある問題は実在し、選択肢ごとの解説は5つ", () => {
     const ids = new Set(all.map((q) => q.id));
@@ -67,5 +79,24 @@ describe("解説データ", () => {
         if (v.choiceNotes) expect(v.choiceNotes, id).toHaveLength(5);
       }
     }
+  });
+
+  it("選択肢の解説で「正解」と書いた番号が、厚労省の正答と合っている", () => {
+    // 「正解。〜」「誤り(正解)。」「正解扱い。」など、(正解) や 正解 で始まるものを正解の印とみなす
+    const MARK = /^正解|[(（]正解[)）]/;
+    const byId = new Map(all.map((q) => [q.id, q]));
+    const bad = [];
+    for (const e of index.exams) {
+      const file = `public/data/explanations/${e.exam}.json`;
+      if (!existsSync(file)) continue;
+      for (const [id, v] of Object.entries(JSON.parse(readFileSync(file, "utf8")))) {
+        const q = byId.get(id);
+        if (!v.choiceNotes || q.excluded || !q.answers.length) continue;
+        const want = [...new Set(q.answers.flat())].sort().join(",");
+        const marked = v.choiceNotes.map((n, i) => (MARK.test(n) ? i + 1 : 0)).filter(Boolean).join(",");
+        if (want !== marked) bad.push(`${id}(正答 ${want} / 解説 ${marked || "なし"})`);
+      }
+    }
+    expect(bad).toEqual([]);
   });
 });

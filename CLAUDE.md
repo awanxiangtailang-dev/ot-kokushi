@@ -10,6 +10,12 @@
 - `ot-site/` … 体験談サイト。`ot-site/app/` と `ot-site/kakomon/` は生成物(gitignore)
 - `scripts/extract/` … 厚労省PDF → データ(`npm run data`。PDFは `raw/`、普段は触らない)
 - `scripts/make-pages.mjs` … 1問1ページの解説ページと回ごとの一覧を生成
+- `content/rinsho/*.md` … 臨床ノート(運営者の臨床経験のブログ)。書き方は `_ひな形.md`。`scripts/make-blog.mjs` が `ot-site/rinsho/`(生成物)を作る。記事0本のあいだ一覧は noindex
+- 臨床ノートは患者さん・職場が特定されないかを必ずチェックしてから公開(運営者の実体験だけ。作り話は書かない)
+- `content/goukaku.json` … 合格率・合格基準(厚労省の合格発表から)。`kakomon/goukaku.html` と回ごとの一覧に出る
+- `content/next-exam.json` … 次の試験の情報。データが入るまで `kakomon/<回>/` に日程ページを出す。試験後の手順は `docs/第62回の準備.md`
+- アプリの問題検索: `src/logic/search.ts`(キーワード・問題番号)。`app/?search=言葉` で開ける。解説ページの検索欄もここへ飛ぶ
+- `scripts/check-links.mjs` … release/ のリンク切れ検査(`npm run release` で自動)
 - `docs/サイト作りの計画.md` … 書く内容とSEOの方針
 
 ## コマンド(Windows PowerShell。Python は使えない、Node のみ)
@@ -38,11 +44,11 @@
 
 ## 現状(2026-11-25)
 - 解説: 第52〜61回の2,000問すべてあり。監修済みは第61回の200問だけ(残り1,800問は未監修)
-- ドメイン `ot-kokushi.com` を Cloudflare で購入済み(`site.config.json` に設定済み)。GitHub・DNS はまだ
+- ドメイン `ot-kokushi.com` を Cloudflare で購入済み。GitHub に push 済み、Pages・DNS 設定済み。公開は書きかけ3ページ待ち
 - 運営者ページ・体験談記事2本は書きかけ(運営者の回答待ち)。公開先は GitHub Pages の予定(リポジトリ未作成)
 
 ## 次にやること
 方針: 試験(2027年2月下旬)前に検索に載せたいので、「公開」と「監修」を先にする
-1. ドメイン購入 → GitHub に上げて公開 → Search Console(`docs/公開の手順.md`)
-2. 監修(新しい回から。`npm run review`、あやしい問題から)
-3. 運営者ページ・記事(回答が来たら文章に整える)
+0. **【運営者に毎回声をかける】GitHub の Settings → Pages で「Enforce HTTPS」にチェックが入ったか確認する**(2026-11-25 は DNS Check in Progress で待ち。入ったらこの行を消す)
+1. 書きかけ3ページ(トップの1行・about・privacy の日付)を埋めて push → 公開 → Search Console(`docs/公開の手順.md`)。GitHub(awanxiangtailang-dev/ot-kokushi)・ドメイン・DNS は設定済み。push はユーザーの Terminal パネルで行う(GCM のログインが要るため)
+2. 監修(新しい回から。`npm run review`、あやしい問題から)3. 運営者ページ・記事(回答が来たら文章に整える)

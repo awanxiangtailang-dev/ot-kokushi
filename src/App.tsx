@@ -9,10 +9,12 @@ import { HomeScreen } from "./components/HomeScreen";
 import { QuizScreen } from "./components/QuizScreen";
 import { ResultScreen } from "./components/ResultScreen";
 import { WeakListScreen } from "./components/WeakListScreen";
+import { SearchScreen } from "./components/SearchScreen";
 
 type Screen =
   | { name: "home" }
   | { name: "weak" }
+  | { name: "search"; query: string }
   | { name: "quiz"; questions: Question[]; runId: number; before: ProgressMap; retry: QuizSettings | Question[] }
   | { name: "result"; questions: Question[]; records: AnswerRecord[]; before: ProgressMap; retry: QuizSettings | Question[] };
 
@@ -59,9 +61,12 @@ export default function App() {
         // 最初は、いちばん新しい回だけを選んでおく
         setSettings((s) => (s.filter.exams.length ? s : { ...s, filter: { ...s.filter, exams: bank.exams.slice(0, 1).map((e) => e.exam) } }));
         setBankState("ready");
-        const id = new URLSearchParams(location.search).get("q");
+        const params = new URLSearchParams(location.search);
+        const id = params.get("q");
         const q = id ? bank.byId.get(id) : undefined;
         if (q) setScreen({ name: "quiz", questions: [q], runId: Date.now(), before: progressRef.current, retry: [q] });
+        // ?search=FIM なら、検索画面をその言葉で開く(解説ページの検索欄から来たとき)
+        else if (params.has("search")) setScreen({ name: "search", query: params.get("search") ?? "" });
       })
       .catch(() => !cancelled && setBankState("failed"));
     return () => {
@@ -151,6 +156,16 @@ export default function App() {
           onStart={start}
           onStartQuestions={(qs) => startWith(qs, qs)}
           onOpenWeakList={() => setScreen({ name: "weak" })}
+          onOpenSearch={() => setScreen({ name: "search", query: "" })}
+        />
+      );
+    case "search":
+      return (
+        <SearchScreen
+          questions={questions}
+          initialQuery={screen.query}
+          onStartQuestions={(qs) => startWith(qs, qs)}
+          onBack={goHome}
         />
       );
     case "weak":

@@ -37,10 +37,12 @@ function walk(dir) {
 }
 // 過去問の解説ページを最新のデータから作り直す(ot-site/kakomon/)
 execSync("node scripts/make-pages.mjs", { stdio: "inherit" });
-// 書きかけのチェックは、自分で書くページだけ(自動で作る解説ページは除く)
+// 臨床ノートを content/rinsho/ から作り直す(ot-site/rinsho/)
+execSync("node scripts/make-blog.mjs", { stdio: "inherit" });
+// 書きかけのチェックは、自分で書くページだけ(自動で作る解説ページ・臨床ノートは除く)
 // (drafts に入れた記事は、公開しないのでチェックしない)
 const htmlFiles = walk("ot-site").filter(
-  (f) => f.endsWith(".html") && !/[\\/]kakomon[\\/]/.test(f) && !isDraft(relative("ot-site", f).replaceAll("\\", "/")),
+  (f) => f.endsWith(".html") && !/[\\/](kakomon|rinsho)[\\/]/.test(f) && !isDraft(relative("ot-site", f).replaceAll("\\", "/")),
 );
 if (drafts.length) notes.push(`まだ公開しない記事(site.config.json の drafts): ${drafts.join("、")}`);
 for (const file of htmlFiles) {
@@ -88,7 +90,8 @@ execSync("npx tsc --noEmit && npx vite build", { stdio: "inherit", env: { ...pro
 rmSync("release", { recursive: true, force: true });
 cpSync("ot-site", "release", {
   recursive: true,
-  filter: (src) => !/[\\/]ot-site[\\/]app([\\/]|$)/.test(src) && !isDraft(relative("ot-site", src).replaceAll("\\", "/")),
+  // ot-site/app は古いビルドなので入れない(src は "ot-site\app" のように先頭に区切りがないこともある)
+  filter: (src) => !/(^|[\\/])ot-site[\\/]app([\\/]|$)/.test(src) && !isDraft(relative("ot-site", src).replaceAll("\\", "/")),
 });
 cpSync("dist", "release/app", { recursive: true });
 
@@ -112,7 +115,10 @@ if (leftover.length) {
 // 検索エンジン向け(drafts は htmlFiles に入っていないので、サイトマップにも入らない)
 const pages = htmlFiles.map((f) => relative("ot-site", f).replaceAll("\\", "/"));
 // 解説ページは、検索に出すもの(監修済みの解説と一覧ページ)だけをサイトマップに入れる
-const { indexable } = JSON.parse(readFileSync("ot-site/kakomon/pages.json", "utf8"));
+const indexable = [
+  ...JSON.parse(readFileSync("ot-site/kakomon/pages.json", "utf8")).indexable,
+  ...JSON.parse(readFileSync("ot-site/rinsho/pages.json", "utf8")).indexable,
+];
 const urls = [...pages.map((p) => `${url}/${p === "index.html" ? "" : p}`), `${url}/app/`, ...indexable.map((p) => `${url}/${p}`)];
 writeFileSync(
   "release/sitemap.xml",
@@ -124,6 +130,9 @@ writeFileSync("release/robots.txt", `User-agent: *\nAllow: /\n\nSitemap: ${url}/
 // 独自ドメインのときは CNAME を置く(GitHub Pages がドメインを覚えておくため)
 const host = siteUrl ? new URL(siteUrl).host : "";
 if (host && !host.endsWith("github.io")) writeFileSync("release/CNAME", host + "\n");
+
+// リンク切れがあれば止める
+execSync("node scripts/check-links.mjs release", { stdio: "inherit" });
 
 const files = walk("release").length + walk("release/app").length;
 const size = [...walk("release"), ...walk("release/app")].reduce((s, f) => s + statSync(f).size, 0);

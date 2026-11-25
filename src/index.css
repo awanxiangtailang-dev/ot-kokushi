@@ -589,3 +589,39 @@ button.hero-stat:hover { background: rgba(255, 255, 255, 0.26); }
 
 .score { position: relative; overflow: hidden; }
 .save-note { text-align: center; margin: -12px 0 20px; }
+
+/* ───────── 問題をさがす ───────── */
+.search-form input,
+.search-open {
+  width: 100%;
+  min-height: 52px;
+  padding: 12px 16px;
+  border: 1.5px solid var(--border);
+  border-radius: 14px;
+  background: var(--card);
+  color: var(--text);
+  font: inherit;
+  font-size: 1rem;
+}
+.search-form input:focus { outline: none; border-color: var(--accent); }
+.search-form { margin-bottom: 12px; }
+.search-open {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 16px;
+  color: var(--muted);
+  text-align: left;
+  cursor: pointer;
+}
+.search-open:hover { border-color: var(--accent); }
+.chip-row { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0 4px; }
+.search-count { margin: 4px 0 10px; }
+.search-results { list-style: none; padding: 0; margin: 16px 0 0; }
+.search-hit { margin-bottom: 12px; }
+.search-title { margin: 0 0 6px; font-weight: 700; }
+.search-title .category-tag { margin-right: 8px; }
+.search-snippet { margin: 0 0 10px; color: var(--muted); font-size: 0.9rem; overflow-wrap: anywhere; }
+.search-snippet mark { background: var(--sun); color: #3a2a00; border-radius: 3px; padding: 0 2px; }
+.search-hit .secondary { min-height: 44px; }
+.search-link { align-self: center; font-weight: 700; font-size: 0.9rem; }
